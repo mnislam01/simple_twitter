@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+    twitter:
+        build:
+            context: .
+        ports:
+            - "8000:8000"
+        volumes:
+            - .:/www
+        command: >
+            sh -c "python manage.py wait_for_db &&
+                   python manage.py migrate &&
+                   python manage.py runserver 0.0.0.0:8000"
+        environment:
+            - DB_HOST=postgres
+            - DB_NAME=twitter
+            - DB_USER=admin
+            - DB_PASS=secret12345
+        depends_on:
+            - postgres
+
+    postgres:
+        image: postgres:13-alpine
+        environment:
+            - POSTGRES_DB=twitter
+            - POSTGRES_USER=admin
+            - POSTGRES_PASSWORD=secret12345
